@@ -1,5 +1,5 @@
-Namada Shielded Expedition links
+## Namada Shielded Expedition links
 
-Indexer: https://namada-indexer.li-nodes.com/block/last
-rpc: https://namada-rpc.li-nodes.com/
-tcp: tcp://namada-tcp.li-nodes.com:44657
+### Indexer: https://namada-indexer.li-nodes.com/block/last
+### RPC: https://namada-rpc.li-nodes.com/
+### RPC (node operations): tcp://namada-tcp.li-nodes.com:44657
