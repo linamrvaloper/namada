@@ -12,11 +12,11 @@
 ## Configure the environment
 **Set variables**
 - WALLET - the alias for the wallet you want to monitor
-- NODE - address of a ledger node (as "{scheme}://{host}:{port}")
+- NODE - address of a ledger node (as "{scheme}://{host}:{port}"). You can use my endpoint or set yours
 ~~~
 echo "export MEMO="your_tpknam_address"" >> $HOME/.bash_profile
 echo "export WALLET="wallet"" >> $HOME/.bash_profile
-echo "export NODE="https://namada-testnet-rpc.itrocket.net:443"" >> $HOME/.bash_profile
+echo "export NODE="https://namada-rpc.li-nodes.com:443"" >> $HOME/.bash_profile
 ~~~
 
 ## Download the script
@@ -32,7 +32,7 @@ If you want to get alerts and summaries via Telegram, you need to create a bot a
 - How to get [chat id](https://stackoverflow.com/questions/32423837/telegram-bot-how-to-get-a-group-chat-id)
 
 After creating telegram bot and group, specify the variables in the monitoring_and_voting.sh:
-- enable Telegram notifications ```telegram_enable=false```
+- enable Telegram notifications ```telegram_enable=true```
 - set values for ```telegram_chat_id``` and ```telegram_bot_token```
 ~~~
 nano monitoring_and_voting.sh
