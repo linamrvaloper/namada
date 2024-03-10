@@ -50,6 +50,7 @@ bash monitoring_and_voting.sh
 ~~~
 
 If you want to disconnect the session, use ```CTRL+B D```. 
+
 If you want to kill session:
 ~~~
 tmux kill-session -t monitoring_and_voting
