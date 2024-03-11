@@ -61,10 +61,10 @@ main_loop() {
             echo "Proposal $i is already voted for. Next proposal..."
             echo "-----------------------------------------------------------------"
         else
-            start_epoch=$(echo "$(namadac query-proposal --node $NODE --proposal-id $i)" | grep -oP 'Start Epoch: \K\d+')
-            end_epoch=$(echo "$(namadac query-proposal --node $NODE --proposal-id $i)" | grep -oP 'End Epoch: \K\d+')
+            start_epoch=$(echo "$(namadac query-proposal --node $NODE --proposal-id $i 2>/dev/null)" | grep -oP 'Start Epoch: \K\d+')
+            end_epoch=$(echo "$(namadac query-proposal --node $NODE --proposal-id $i 2>/dev/null)" | grep -oP 'End Epoch: \K\d+')
             last_epoch=$(echo "$(namadac epoch --node $NODE)" | grep -oP 'Last committed epoch: \K\d+')
-            proposal_status=$(echo "$(namadac query-proposal --node $NODE --proposal-id $i)" | grep "Status: " | awk '{print $2}')
+            proposal_status=$(echo "$(namadac query-proposal --node $NODE --proposal-id $i 2>/dev/null)" | grep "Status: " | awk '{print $2}')
             echo "Last committed epoch=${last_epoch}. Checking proposal $i... Proposal status is $proposal_status."
             echo "-----------------------------------------------------------------"
             
