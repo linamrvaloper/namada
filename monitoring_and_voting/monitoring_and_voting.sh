@@ -129,7 +129,7 @@ main_loop() {
                         echo "-----------------------------------------------------------------"
                     fi
                 else
-                    echo "Please, refill the balance. Voting will continue in 4h."
+                    echo "Please, refill the balance of $WALLET. Voting will continue in 4 hours."
                     echo "-----------------------------------------------------------------"
                     break
                 fi
@@ -146,11 +146,11 @@ while true; do
         echo "-----------------------------------------------------------------"
         main_loop
     else
-        echo "Namada SE node not responding/running. Check and restart the node. Voting will continue in 4h."
+        echo "Namada SE node not responding/running. Check and restart the node. Voting will continue in 4 hours."
         echo "-----------------------------------------------------------------"
-        send_telegram_message "Namada SE node not responding/running. Check and restart the node. Voting will continue in 4h."
+        send_telegram_message "Namada SE node not responding/running. Check and restart the node. Voting will continue in 4 hours."
     fi
-    echo "Sleeping for 4h..."
+    echo "Sleeping for 4 hours..."
     echo "-----------------------------------------------------------------"
     echo "-----------------------------------------------------------------"
     sleep 4h
