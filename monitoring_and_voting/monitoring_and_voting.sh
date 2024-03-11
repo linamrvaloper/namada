@@ -31,7 +31,8 @@ check_balance() {
     balance=$(echo "$(namadac balance --owner $WALLET --node $NODE)" | grep -oP 'naan: \K\d+')
     if [[ $balance -lt $min_balance ]]; then
         echo "Namada SE >> voting >> balance is less than minimum of $min_balance. Current balance: $balance."
-        send_telegram_message "Namada SE >> balance of $WALLET is less than minimum of $min_balance. Current balance: $balance."
+        send_telegram_message "Namada SE >> balance of $WALLET is less than minimum of $min_balance. Current balance: $balance.
+You should refill the balance."
         return 1  # Indicate failure due to low balance
     fi
     return 0  # Indicate success
@@ -128,8 +129,9 @@ main_loop() {
                         echo "-----------------------------------------------------------------"
                     fi
                 else
-                    echo "Balance check failed for proposal $i. Skipping..."
+                    echo "Please, refill the balance. Voting will continue in 4h."
                     echo "-----------------------------------------------------------------"
+                    break
                 fi
             fi
         fi
@@ -142,12 +144,12 @@ while true; do
     if echo "$(systemctl status $nam_service)" | grep -q "Active: active (running)"; then
         echo "Namada SE node is active."
         echo "-----------------------------------------------------------------"
+        main_loop
     else
-        echo "Namada SE node not responding/running. Check and restart the node."
+        echo "Namada SE node not responding/running. Check and restart the node. Voting will continue in 4h."
         echo "-----------------------------------------------------------------"
-        send_telegram_message "Namada SE node not responding/running. Check and restart the node."
+        send_telegram_message "Namada SE node not responding/running. Check and restart the node. Voting will continue in 4h."
     fi
-    main_loop
     echo "Sleeping for 4h..."
     echo "-----------------------------------------------------------------"
     echo "-----------------------------------------------------------------"
