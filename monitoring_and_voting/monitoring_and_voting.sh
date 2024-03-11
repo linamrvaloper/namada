@@ -50,7 +50,7 @@ fi
 
 # Main loop for voting
 main_loop() {
-    local i=250 # Proposal id to begin with - has to be set once before running the script for the first time
+    local i=260 # Proposal id to begin with - has to be set once before running the script for the first time
     local voted_ids=()
     local error_ids=()
     local voting_summary=""
