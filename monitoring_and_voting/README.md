@@ -1,12 +1,12 @@
-# Node and balance monitorig + voting script
+# Node and balance monitoring + voting script
 
 ***Script functionality:***
 - Tracks node status (every 4h)
 - Tracks wallet balance (every 4h)
-- Votes on all types of proposals (every 4h)
+- Finds on-going proposals and votes on all types of them (every 4h)
 
 ***Optional:***
-- Notifications on Telegram if node is not running or if the balance is less than min_balance
+- Notifications via Telegram if node is not running or if the balance is less than min_balance
 - Voting summaries on Telegram
 
 ## Configure the environment
