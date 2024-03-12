@@ -28,7 +28,7 @@ send_telegram_message() {
 # Function to check balance. Min balance can be set as needed
 check_balance() {
     min_balance=20
-    balance=$(echo "$(namadac balance --owner $WALLET --node $NODE)" | grep -oP 'naan: \K\d+')
+    balance=$(echo "$(namadac balance --owner $WALLET )" | grep -oP 'naan: \K\d+')
     if [[ $balance -lt $min_balance ]]; then
         echo "Namada SE >> voting >> balance is less than minimum of $min_balance. Current balance: $balance."
         send_telegram_message "Namada SE >> balance of $WALLET is less than minimum of $min_balance. Current balance: $balance.
@@ -62,10 +62,10 @@ main_loop() {
             echo "Proposal $i is already voted for. Next proposal..."
             echo "-----------------------------------------------------------------"
         else
-            start_epoch=$(echo "$(namadac query-proposal --node $NODE --proposal-id $i 2>/dev/null)" | grep -oP 'Start Epoch: \K\d+')
-            end_epoch=$(echo "$(namadac query-proposal --node $NODE --proposal-id $i 2>/dev/null)" | grep -oP 'End Epoch: \K\d+')
-            last_epoch=$(echo "$(namadac epoch --node $NODE)" | grep -oP 'Last committed epoch: \K\d+')
-            proposal_status=$(echo "$(namadac query-proposal --node $NODE --proposal-id $i 2>/dev/null)" | grep "Status: " | awk '{print $2}')
+            start_epoch=$(echo "$(namadac query-proposal  --proposal-id $i 2>/dev/null)" | grep -oP 'Start Epoch: \K\d+')
+            end_epoch=$(echo "$(namadac query-proposal  --proposal-id $i 2>/dev/null)" | grep -oP 'End Epoch: \K\d+')
+            last_epoch=$(echo "$(namadac epoch )" | grep -oP 'Last committed epoch: \K\d+')
+            proposal_status=$(echo "$(namadac query-proposal  --proposal-id $i 2>/dev/null)" | grep "Status: " | awk '{print $2}')
             echo "Last committed epoch=${last_epoch}. Checking proposal $i... Proposal status is $proposal_status."
             echo "-----------------------------------------------------------------"
             
@@ -111,7 +111,7 @@ main_loop() {
                 if check_balance; then
                     echo "The balance is $balance"
                     vote_output=$(expect -c "set timeout -1
-                    spawn namadac vote-proposal --memo $MEMO --vote yay --address $WALLET --node $NODE --proposal-id $i
+                    spawn namadac vote-proposal --memo $MEMO --vote yay --address $WALLET  --proposal-id $i
                     expect \"Enter your decryption password: \"
                     send -- \"$password\r\"
                     expect eof")
