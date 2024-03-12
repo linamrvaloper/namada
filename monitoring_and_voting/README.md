@@ -14,7 +14,7 @@
 - WALLET - the alias for the wallet you want to monitor
 ~~~
 echo "export MEMO="your_tpknam_address"" >> $HOME/.bash_profile
-echo "export WALLET="wallet"" >> $HOME/.bash_profile
+echo "export WALLET="<YOUR_WALLET_NAME>"" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 ~~~
 
