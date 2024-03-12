@@ -12,11 +12,9 @@
 ## Configure the environment
 **Set variables**
 - WALLET - the alias for the wallet you want to monitor
-- NODE - address of a ledger node (as "{scheme}://{host}:{port}"). You can use my endpoint or set yours
 ~~~
 echo "export MEMO="your_tpknam_address"" >> $HOME/.bash_profile
 echo "export WALLET="wallet"" >> $HOME/.bash_profile
-echo "export NODE="https://namada-rpc.li-nodes.com:443"" >> $HOME/.bash_profile
 ~~~
 
 ## Download the script
