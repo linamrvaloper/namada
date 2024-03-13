@@ -10,5 +10,5 @@ osmo-test-5, 07-tendermint-2872, connection-2607, channel-6301
 
 **`Test transactions:`**
 
-- **OUT:** https://www.mintscan.io/osmosis-testnet/tx/3F0E2D3C9A209FFB1DC84BE2BAD491A1DEAF5E1C724F8C263EA16ACD5A97EFF6?height=5941188  
-- **IN:** https://www.mintscan.io/osmosis-testnet/tx/FA0CBB1A54078C61EBBE1EFCAC15515E6D6C421281969E26AE9A27D0A1C0803B?height=5941240
+- **OUT:** https://www.mintscan.io/osmosis-testnet/tx/BE9412F908C180B989EC36A0DD1B3AE3DBB39888C7456506B73F3E9C893B352C?height=5984442  
+- **IN:** https://www.mintscan.io/osmosis-testnet/tx/DC8E582B27577525FA375B02A01413C0CAA4D76E8F99015AB533A96122584C39?height=5984492
