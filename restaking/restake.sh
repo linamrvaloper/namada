@@ -49,12 +49,12 @@ validator_restake() {
                     send -- \"$val_password\r\"
                     expect eof")
         if echo "$bond_output" | grep -q "Transaction was successfully applied"; then
-          echo "Successfully bonded "$bond_amount" NAM to validator "$VALIDATOR_ADDRESS"."
+          echo "Successfully bonded "$bond_amount" NAM to validator "$VALIDATOR_ADDRESS". (self-bond)"
           echo "_________________________________________________________________________"
         else
           echo "Error: Failed to bond."
           return 1
-        fi            
+        fi
       else
         echo "Error: Bond amount ($bond_amount) is less than the minimum bond ($min_bond)."
         return 1
