@@ -98,13 +98,11 @@ wallet_restake() {
                     echo "_________________________________________________________________________"
                 else
                     echo "Error: Failed to claim."
-                    return 1
                 fi
             # Add the claimed rewards to the total
             total_claimed=$(echo "$total_claimed + $bond_reward" | bc -l)
             else
                 echo "Reward amount ($bond_reward) from validator $validator is less than the minimum claim ($min_claim)."
-                return 1
             fi
         fi
     done
