@@ -8,7 +8,8 @@ echo ""
 # Customize thresholds if needed
 stop_balance=20
 min_balance=1000
-min_bond=10
+min_restake=30
+min_claim=30
 
 # Function to check balance. Min balance can be reset as needed
 check_balance() {
@@ -23,12 +24,12 @@ check_balance() {
 }
 
 
-# Function to restake validator rewards
+# Function to restake your validator rewards
 validator_restake() {
-  echo "Attempting to restake validator rewards..."
+  echo "Attempting to restake your validator rewards..."
   val_reward=$(echo "$(namadac rewards --validator "$VALIDATOR_ADDRESS")" | grep -o '[0-9]\+\.[0-9]\+')
   echo "Validator rewards available for claiming: $val_reward"
-  if check_balance && [[ $(echo "$val_reward > $min_bond" | bc) -eq 1 ]] && [[ $(echo "$balance + $val_reward > $min_balance + $min_bond" | bc) -eq 1 ]]; then
+  if check_balance && (( $(echo "$val_reward > $min_restake" | bc -l) )); then
   echo "Proceeding to claim rewards..."
     claim_output=$(expect -c "set timeout -1
                   spawn namadac claim-rewards --validator "$VALIDATOR_ADDRESS" --memo "$MEMO"
@@ -36,41 +37,102 @@ validator_restake() {
                   send -- \"$val_password\r\"
                   expect eof")
     if echo "$claim_output" | grep -q "Transaction was successfully applied"; then
-      echo "Successfully claimed $val_reward NAM."
+      echo "Successfully claimed $val_reward naan."
       echo "_________________________________________________________________________"
-    fi
-    
-    if check_balance; then
-      bond_amount=$((balance - min_balance))
-      if [[ $(echo "$bond_amount > $min_bond" | bc) -eq 1 ]]; then
-        bond_output=$(expect -c "set timeout -1
-                    spawn namadac bond --validator "$VALIDATOR_ADDRESS" --amount "$bond_amount" --memo "$MEMO"
+      val_balance=$(echo "$(namadac balance --owner $VALIDATOR_ADDRESS)" | grep -oP 'naan: \K\d+')
+      selfbond_output=$(expect -c "set timeout -1
+                    spawn namadac bond --validator "$VALIDATOR_ADDRESS" --amount "$val_balance" --memo "$MEMO"
                     expect \"Enter your decryption password: \"
                     send -- \"$val_password\r\"
                     expect eof")
-        if echo "$bond_output" | grep -q "Transaction was successfully applied"; then
-          echo "Successfully bonded "$bond_amount" NAM to validator "$VALIDATOR_ADDRESS". (self-bond)"
+        if echo "$selfbond_output" | grep -q "Transaction was successfully applied"; then
+          echo "Successfully bonded "$val_balance" naan to validator "$VALIDATOR_ADDRESS". (self-bond)"
           echo "_________________________________________________________________________"
         else
           echo "Error: Failed to bond."
           return 1
         fi
-      else
-        echo "Error: Bond amount ($bond_amount) is less than the minimum bond ($min_bond)."
+    else
+        echo "Error: Failed to claim."
         return 1
-      fi
     fi
   else
-    echo "Error: Pre-conditions for validator restake not met."
-    return 1
+     echo "Reward amount ($val_reward) is less than the minimum restake ($min_restake)."
+     return 1
   fi
   return 0
 }
 
 
+# Function to collect all rewards from wallet delegations and restake them to your validator
 wallet_restake() {
-    echo "Wallet restaking should be here..."
-    # ...
+    echo "Collecting validator addresses delegated to..."
+    # Extract all validator addresses delegated to
+    bonds_list_output=$(echo "$(namadac bonds --owner $WALLET)")
+    echo "$bonds_list_output" | grep "Delegations from" | sed -n 's/.* to \(\S*\):.*/\1/p' > delegation_addresses.txt
+    # Read addresses into an array
+    addresses=()
+    mapfile -t addresses < delegation_addresses.txt
+    rm delegation_addresses.txt
+    
+    # Total claimed rewards counter
+    total_claimed=0
+
+    echo "Claiming delegation rewards..."
+    # Loop through each validator address
+    for validator in "${addresses[@]}"; do
+        if check_balance; then
+            # Check the rewards
+            bond_reward=$(echo "$(namadac rewards --validator "$validator" --source "$WALLET")" | grep -o '[0-9]\+\.[0-9]\+')
+    
+            # Check if the rewards exceed the minimum claim amount
+            if (( $(echo "$bond_reward > $min_claim" | bc -l) )); then
+                # Claim the rewards
+                claim_output=$(expect -c "set timeout -1
+                      spawn namadac claim-rewards --validator "$validator" --memo "$MEMO"
+                      expect \"Enter your decryption password: \"
+                      send -- \"$wallet_password\r\"
+                      expect eof")
+                if echo "$claim_output" | grep -q "Transaction was successfully applied"; then
+                    echo "Successfully claimed $bond_reward naan from validator $validator."
+                    echo "_________________________________________________________________________"
+                else
+                    echo "Error: Failed to claim."
+                    return 1
+                fi
+            # Add the claimed rewards to the total
+            total_claimed=$(echo "$total_claimed + $bond_reward" | bc -l)
+            else
+                echo "Reward amount ($bond_reward) from validator $validator is less than the minimum claim ($min_claim)."
+                return 1
+            fi
+        fi
+    done
+
+    # After claiming rewards, bond them to the specified validator
+    if check_balance; then
+        if (($(echo "$balance + $total_claimed > $min_balance + $min_restake" | bc -l) )); then
+        echo "Bonding to your validator..."
+        # Use expect to automate interaction with namadac bond command
+        bond_output=$(expect -c "
+            set timeout -1
+            spawn namadac bond --validator "$VALIDATOR_ADDRESS" --source "$WALLET" --amount "$total_claimed" --memo "$MEMO"
+            expect \"Enter your decryption password: \"
+            send -- \"$wallet_password\r\"
+            expect eof
+        ")
+        if echo "$bond_output" | grep -q "Transaction was successfully applied"; then
+          echo "Successfully bonded rewards of "$total_claimed" naan to validator "$VALIDATOR_ADDRESS"."
+          echo "_________________________________________________________________________"
+        else
+          echo "Error: Failed to bond."
+          return 1
+        fi
+        else
+            echo "Insufficient balance for bonding. Minimum left balance should be $min_balance, and the current balance is $balance."
+            return 1
+        fi
+    return 0
 }
 
 # Infinite loop to repeat the main loop every 4 hours
