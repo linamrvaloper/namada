@@ -110,26 +110,27 @@ wallet_restake() {
     # After claiming rewards, bond them to the specified validator
     if check_balance; then
         if (($(echo "$balance + $total_claimed > $min_balance + $min_restake" | bc -l) )); then
-        echo "Bonding to your validator..."
-        # Use expect to automate interaction with namadac bond command
-        bond_output=$(expect -c "
-            set timeout -1
-            spawn namadac bond --validator "$VALIDATOR_ADDRESS" --source "$WALLET" --amount "$total_claimed" --memo "$MEMO"
-            expect \"Enter your decryption password: \"
-            send -- \"$wallet_password\r\"
-            expect eof
-        ")
-        if echo "$bond_output" | grep -q "Transaction was successfully applied"; then
-          echo "Successfully bonded rewards of "$total_claimed" naan to validator "$VALIDATOR_ADDRESS"."
-          echo "_________________________________________________________________________"
+            echo "Bonding to your validator..."
+            # Use expect to automate interaction with namadac bond command
+            bond_output=$(expect -c "
+                set timeout -1
+                spawn namadac bond --validator "$VALIDATOR_ADDRESS" --source "$WALLET" --amount "$total_claimed" --memo "$MEMO"
+                expect \"Enter your decryption password: \"
+                send -- \"$wallet_password\r\"
+                expect eof
+            ")
+            if echo "$bond_output" | grep -q "Transaction was successfully applied"; then
+              echo "Successfully bonded rewards of "$total_claimed" naan to validator "$VALIDATOR_ADDRESS"."
+              echo "_________________________________________________________________________"
+            else
+              echo "Error: Failed to bond."
+              return 1
+            fi
         else
-          echo "Error: Failed to bond."
-          return 1
-        fi
-        else
-            echo "Insufficient balance for bonding. Minimum left balance should be $min_balance, and the current balance is $balance."
+            echo "Insufficient balance for bonding. Minimum left balance after bonding should be $min_balance, minimum bond is $min_restake, and the current balance is (( $balance + $total_claimed ))."
             return 1
         fi
+    fi
     return 0
 }
 
