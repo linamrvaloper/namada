@@ -89,7 +89,7 @@ wallet_restake() {
             if (( $(echo "$bond_reward > $min_claim" | bc -l) )); then
                 # Claim the rewards
                 claim_output=$(expect -c "set timeout -1
-                      spawn namadac claim-rewards --validator "$validator" --memo "$MEMO"
+                      spawn namadac claim-rewards --validator "$validator" --source "$WALLET" --memo "$MEMO"
                       expect \"Enter your decryption password: \"
                       send -- \"$wallet_password\r\"
                       expect eof")
