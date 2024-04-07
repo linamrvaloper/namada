@@ -121,7 +121,7 @@ wallet_restake() {
                 expect eof
             ")
             if echo "$bond_output" | grep -q "Transaction was successfully applied"; then
-              echo "Successfully bonded rewards of "$total_claimed" naan to validator "$VALIDATOR_ADDRESS"."
+              echo "Successfully bonded rewards of "$bond_amount" naan to validator "$VALIDATOR_ADDRESS"."
               echo "_________________________________________________________________________"
             else
               echo "Error: Failed to bond."
