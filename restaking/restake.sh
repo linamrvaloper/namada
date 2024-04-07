@@ -7,7 +7,7 @@ echo ""
 
 # Customize thresholds if needed
 stop_balance=20
-min_balance=1000
+min_balance=5000
 min_restake=30
 min_claim=30
 
@@ -107,14 +107,15 @@ wallet_restake() {
         fi
     done
 
-    # After claiming rewards, bond them to the specified validator
+    # Bond any rewards if claimed & allowed amount from your wallet to the specified validator (e.g., your validator)
     if check_balance; then
         if (($(echo "$balance + $total_claimed > $min_balance + $min_restake" | bc -l) )); then
             echo "Bonding to your validator..."
-            # Use expect to automate interaction with namadac bond command
+            # The amount to bond
+            bond_amount=$(($balance - $min_balance | bc -l))
             bond_output=$(expect -c "
                 set timeout -1
-                spawn namadac bond --validator "$VALIDATOR_ADDRESS" --source "$WALLET" --amount "$total_claimed" --memo "$MEMO"
+                spawn namadac bond --validator "$VALIDATOR_ADDRESS" --source "$WALLET" --amount "$bond_amount" --memo "$MEMO"
                 expect \"Enter your decryption password: \"
                 send -- \"$wallet_password\r\"
                 expect eof
