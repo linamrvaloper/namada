@@ -6,8 +6,8 @@ read -s -p "Enter your validator decryption password (for self-restaking): " val
 echo "" 
 
 # Customize thresholds if needed
-stop_balance=20
-min_balance=5000
+stop_balance=50
+min_balance=3000
 min_restake=30
 min_claim=30
 
@@ -38,7 +38,7 @@ validator_restake() {
                   expect eof")
     if echo "$claim_output" | grep -q "Transaction was successfully applied"; then
       echo "Successfully claimed $val_reward naan."
-      echo "_________________________________________________________________________"
+      echo "__________________________________________________________________________________"
       val_balance=$(echo "$(namadac balance --owner $VALIDATOR_ADDRESS)" | grep -oP 'naan: \K\d+')
       selfbond_output=$(expect -c "set timeout -1
                     spawn namadac bond --validator "$VALIDATOR_ADDRESS" --amount "$val_balance" --memo "$MEMO"
@@ -47,7 +47,7 @@ validator_restake() {
                     expect eof")
         if echo "$selfbond_output" | grep -q "Transaction was successfully applied"; then
           echo "Successfully bonded "$val_balance" naan to validator "$VALIDATOR_ADDRESS". (self-bond)"
-          echo "_________________________________________________________________________"
+          echo "__________________________________________________________________________________"
         else
           echo "Error: Failed to bond."
           return 1
@@ -95,7 +95,7 @@ wallet_restake() {
                       expect eof")
                 if echo "$claim_output" | grep -q "Transaction was successfully applied"; then
                     echo "Successfully claimed $bond_reward naan from validator $validator."
-                    echo "_________________________________________________________________________"
+                    echo "__________________________________________________________________________________"
                 else
                     echo "Error: Failed to claim."
                 fi
@@ -122,7 +122,6 @@ wallet_restake() {
             ")
             if echo "$bond_output" | grep -q "Transaction was successfully applied"; then
               echo "Successfully bonded rewards of "$bond_amount" naan to validator "$VALIDATOR_ADDRESS"."
-              echo "_________________________________________________________________________"
             else
               echo "Error: Failed to bond."
               return 1
@@ -138,11 +137,11 @@ wallet_restake() {
 # Infinite loop to repeat the main loop every 4 hours
 while true; do
     validator_restake
-    echo "_________________________________________________________________________"
+    echo "__________________________________________________________________________________"
     wallet_restake
-    echo "_________________________________________________________________________"
+    echo "__________________________________________________________________________________"
     echo "Sleeping for 1 hour..."
-    echo "_________________________________________________________________________"
-    echo "_________________________________________________________________________"
+    echo "__________________________________________________________________________________"
+    echo "__________________________________________________________________________________"
     sleep 1h
  done
