@@ -128,7 +128,7 @@ wallet_restake() {
               return 1
             fi
         else
-            echo "Insufficient balance for bonding. Minimum left balance after bonding should be $min_balance, minimum bond is $min_restake, and the current balance is (( $balance + $total_claimed ))."
+            echo "Insufficient balance for bonding. Minimum left balance after bonding should be $min_balance, minimum bond is $min_restake, and the current balance is $balance."
             return 1
         fi
     fi
