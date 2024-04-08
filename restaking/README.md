@@ -6,8 +6,9 @@
 
 ***Operational Algorithm:***
 - Claims any available rewards for the validator and bonds them back to the validator, enhancing their total stake
-- Identifies and claims rewards for all bonded tokens across all validators delegated to, rebonding them to your validator
-- Additionally checks the balance to keep it higher than customizable minimum threshold or not to take any actions if initially the balance is too low
+- Identifies and claims rewards for all bonded tokens across all validators delegated to
+- Rebonds these rewards and some additional balance to your validator
+- Additionally monitors the wallet balance to keep it higher than customizable minimum threshold or not to take any actions if the balance is too low
 
 ## Configure the environment
 **Install dependencies if needed**
@@ -36,8 +37,10 @@ chmod +x restake.sh
 ## Customize some variables if necessary
 
 After creating telegram bot and group, specify the variables in the monitoring_and_voting.sh:
-- enable Telegram notifications ```telegram_enable=true```
-- set values for ```telegram_chat_id``` and ```telegram_bot_token```
+- `stop_balance` (50 by default) - wallet balance below which no actions will be taken
+- `min_balance` (3000 by default) - the balance you want to keep on your wallet after restaking
+- `min_restake` (30 by default) - restaking minimum threshold
+- `min_claim` (30 by default) - claiming miminum threshold
 ~~~
 nano restake.sh
 ~~~
