@@ -9,6 +9,7 @@
 - Identifies and claims rewards for all bonded tokens across all validators delegated to
 - Rebonds these rewards and some additional balance to your validator
 - Additionally monitors the wallet balance to keep it higher than customizable minimum threshold or not to take any actions if the balance is too low
+- Takes into account the claiming/bonding appropriateness based on the amount available for claiming/bonding and transaction fees
 
 ## Configure the environment
 **Install dependencies if needed**
@@ -30,7 +31,7 @@ source $HOME/.bash_profile
 ## Download the script
 ~~~
 cd $HOME
-wget -O restake.sh LINK!!!!!
+wget -O restake.sh https://raw.githubusercontent.com/linamrvaloper/namada-se/main/restaking/restake.sh
 chmod +x restake.sh
 ~~~
 
